@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  nginx-router:
+    networks: { default: { aliases: ["${COMPOSE_PROJECT_NAME}.local"] } }
+    image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-nginx-router:${NGINX_ROUTER_TAG}
+    build: { context: ./nginx-router }
+    restart: always
+    ports: ["80:80"]
+    depends_on: ["adminer", "mailhog", "minio", "frontend"]
+    env_file: "./env/nginx-router.env"
+
+  adminer:
+    image: adminer
+    restart: always
+
+  mailhog:
+    image: mailhog/mailhog
+    restart: always
+    ports: ["25:1025", "8025:8025"]
+
+  minio:
+    image: minio/minio
+    restart: always
+    environment:
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_API_SIGNATURE=${MINIO_API_SIGNATURE}
+    volumes: ["minio:/data"]
+    command: "server /data"
+
+  minio-client:
+    image: minio/mc
+    environment:
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_API_SIGNATURE=${MINIO_API_SIGNATURE}
+    volumes: ["./minio.init:/minio.init"]
+    entrypoint: sh
+    depends_on: ["minio"]
+    command: "/minio.init/init.sh"
+
+  frontend:
+    image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-frontend:${FRONTEND_TAG}
+    build:
+      {
+        context: "../../apps/frontend-${FRONTEND_TYPE}",
+        dockerfile: Dockerfile,
+      }
+    restart: always
+    env_file: "./env/frontend.env"
+    volumes:
+      - ../../apps/frontend-${FRONTEND_TYPE}:/usr/src/app
+
+volumes:
+  minio:
