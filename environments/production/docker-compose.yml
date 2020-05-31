@@ -4,14 +4,18 @@ services:
   nginx-router:
     networks: { default: { aliases: ["${COMPOSE_PROJECT_NAME}.local"] } }
     image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-nginx-router:${NGINX_ROUTER_TAG}
+    container_name: ${COMPOSE_PROJECT_NAME}-nginx-router
     build: { context: ./nginx-router }
     restart: always
-    ports: ["80:80"]
+    ports: ["${NGINX_PORT}:${NGINX_PORT}"]
     depends_on: ["minio", "frontend"]
     env_file: "./env/nginx-router.env"
+    environment:
+      - NGINX_PORT=${NGINX_PORT}
 
   minio:
     image: minio/minio
+    container_name: ${COMPOSE_PROJECT_NAME}-minio
     restart: always
     environment:
       - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
@@ -23,6 +27,7 @@ services:
 
   minio-client:
     image: minio/mc
+    container_name: ${COMPOSE_PROJECT_NAME}-minio-client
     environment:
       - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
@@ -35,6 +40,7 @@ services:
 
   frontend:
     image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-frontend:${FRONTEND_TAG}
+    container_name: ${COMPOSE_PROJECT_NAME}-frontend
     build:
       {
         context: "../../apps/frontend-${FRONTEND_TYPE}",
@@ -44,6 +50,11 @@ services:
     env_file: "./env/frontend.env"
     volumes:
       - ../../apps/frontend-${FRONTEND_TYPE}:/usr/src/app
+
+  backend:
+    image: nginx:alpine
+    container_name: ${COMPOSE_PROJECT_NAME}-backend
+    restart: always
 
 volumes:
   minio:

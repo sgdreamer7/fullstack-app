@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  router:
+    image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-router:${NGINX_ROUTER_TAG}
+    container_name: ${COMPOSE_PROJECT_NAME}-router
+    build: { context: ./blue-green-router }
+    restart: always
+    ports: ["${BLUE_GREEN_ROUTER_PORT}:${BLUE_GREEN_ROUTER_PORT}"]
+    env_file: "./env/blue-green-router.env"
+    environment:
+      - BLUE_GREEN_ROUTER_PORT=${BLUE_GREEN_ROUTER_PORT}
+      - BLUE_GREEN_PORT=${BLUE_GREEN_PORT}
+      - CURRENT_STATE=${CURRENT_STATE}
+    volumes:
+      - ./blue-green-router:/usr/src/app
