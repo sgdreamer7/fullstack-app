@@ -24,7 +24,7 @@ if test $CURRENT_STATE; then  ENV_VARS="${ENV_VARS} CURRENT_STATE=${CURRENT_STAT
 # echo "2: ${ENV_VARS}\n" && \
 if [ "$CURRENT_STATE" == "green" ]; then ENV_VARS="${ENV_VARS} NGINX_PORT=${GREEN_PORT} BLUE_GREEN_PORT=${GREEN_PORT}"; \
 elif [ "$CURRENT_STATE" == "blue" ]; then ENV_VARS="${ENV_VARS} NGINX_PORT=${BLUE_PORT} BLUE_GREEN_PORT=${BLUE_PORT} "; \
-else ENV_VARS="${ENV_VARS} NGINX_PORT=${BLUE_PORT} BLUE_GREEN_PORT=${BLUE_PORT} "; fi && \
+else ENV_VARS="${ENV_VARS} NGINX_PORT=${NGINX_PORT} BLUE_GREEN_PORT=${BLUE_PORT} "; fi && \
 # echo "3: ${ENV_VARS}\n" && \
 export $(echo ${ENV_VARS} | xargs) && \
 echo "Running command: $1 $3 $4 $5 $6 $7 $8 $9 "
