@@ -13,7 +13,7 @@
     "build": "./scripts.sh 'eval docker-compose build'",
     "start": "./scripts.sh 'eval docker-compose up -d'",
     "stop": "./scripts.sh 'eval docker-compose down'",
-    "sh:router": "./scripts.sh 'docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh'",
+    "sh:router": "./scripts.sh 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh'",
     "logs:router": "./scripts.sh 'eval docker logs ${COMPOSE_PROJECT_NAME}-nginx-router'",
     "logs:frontend": "./scripts.sh 'eval docker logs ${COMPOSE_PROJECT_NAME}-frontend'",
     "logs:adminer": "./scripts.sh 'eval docker logs ${COMPOSE_PROJECT_NAME}-adminer'",
