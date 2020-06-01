@@ -1,0 +1,94 @@
+#!/bin/sh
+case "$1" in
+  "build")
+      ./scripts 'eval docker-compose build' $2
+      ;;
+  "start")
+      ./scripts 'eval docker-compose up -d' $2
+     ;;
+  "stop")
+      ./scripts 'eval docker-compose down' $2
+     ;;
+  "sh")
+      ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh' $2
+     ;;
+  "logs")
+    case "$2" in
+      "router")
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-nginx-router' $3 $4 $5 $6 $7 $8 $9 
+        ;;
+      "frontend")
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-frontend' $3 $4 $5 $6 $7 $8 $9
+        ;;
+      "adminer")
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-adminer' $3 $4 $5 $6 $7 $8 $9
+        ;;
+      "mailhog")
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-mailhog' $3 $4 $5 $6 $7 $8 $9
+        ;;
+      "minio")
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-minio' $3 $4 $5 $6 $7 $8 $9
+        ;;
+      "minio-client")
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-minio-client' $3 $4 $5 $6 $7 $8 $9
+        ;;
+      *)
+        echo ""
+        echo "No options found for the logs command."
+        echo ""
+        echo "Please enter one of the following:"
+        echo ""
+        echo "    router          Logging for the nginx-router service"
+        echo "    frontend        Logging for the frontend service"
+        echo "    adminer         Logging for the adminer service"
+        echo "    mailhog         Logging for the mailhog service"
+        echo "    minio           Logging for the minio service"
+        echo "    minio-client    Logging for the minio-client service"
+        echo ""
+        ;;
+    esac
+    ;;
+  *)
+    echo ""
+    echo "usage: ./standalone COMMAND [OPTION] [ENVIRONMENT] [OPTIONS]"
+    echo ""
+    echo  "Standalone fullstack application CLI"
+    echo ""
+    echo "Commands:"
+    echo "  build   Build docker images"
+    echo "  start   Start application"
+    echo "  stop    Stop application"
+    echo "  sh      Run shell in nginx-router container"
+    echo "  logs    Show logs output for the services"
+    echo ""
+    echo "Option: "
+    echo "  for the logs command:"
+    echo "    router          Logging for the nginx-router service"
+    echo "    frontend        Logging for the frontend service"
+    echo "    adminer         Logging for the adminer service"
+    echo "    mailhog         Logging for the mailhog service"
+    echo "    minio           Logging for the minio service"
+    echo "    minio-client    Logging for the minio-client service"
+    echo ""
+    echo "Options: "
+    echo "  for the logs command:"
+    echo "    --follow        Follow log output"
+    echo "    --tail string   Number of lines to show from the end of the logs (default "all")"
+    echo ""
+    echo "Environments: "
+    echo "  dev         Development environment"
+    echo "  prod        Production environment"
+    echo "  staging     Staging environment"
+    echo "  test        Testing environment"
+    echo ""
+    echo "If omitted, will be used development environment."
+    echo ""
+    echo "Examples:"
+    echo ""
+    echo "  ./standalone build"
+    echo "  ./standalone start dev"
+    echo "  ./standalone start prod"
+    echo "  ./standalone logs dev router"
+    echo "  ./standalone logs prod frontend --follow"
+    echo ""
+esac

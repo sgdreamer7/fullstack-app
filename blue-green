@@ -1,0 +1,58 @@
+#!/bin/sh
+case "$1" in
+  "status")
+      ./blue-green-router cmd $2 "wget -q -O - http://127.0.0.1/status | xargs | echo"
+      ;;
+  "start")
+     ./blue start $2
+     ./green start $2
+     ./blue-green-router start $2;
+     ;;
+  "stop")
+      ./blue stop $2
+     ./green stop $2
+     ./blue-green-router stop $2;
+     ;;
+  "switch-to-blue")
+      ./blue-green-router reload-green $2
+      ./blue build $2
+      ./blue stop $2 
+      ./blue start $2
+      ./blue-green-router reload-blue $2
+     ;;
+   "switch-to-green")
+      ./blue-green-router reload-blue $2
+      ./green build $2
+      ./green stop $2 
+      ./green start $2
+      ./blue-green-router reload-green $2
+     ;;
+  *)
+    echo ""
+    echo "usage: ./blue-green COMMAND [ENVIRONMENT]"
+    echo ""
+    echo  "Blue/Green mode for then fullstack application CLI"
+    echo ""
+    echo "Commands:"
+    echo "  status              Show current blue/green mode (environment option is mandatory)"
+    echo "  start               Start blue/green mode application"
+    echo "  stop                Stop blue/green mode application"
+    echo "  switch-to-blue      Build and switch application to the blue state"
+    echo "  switch-to-green     Build and switch application to the green state"
+    echo ""
+    echo "Environments: "
+    echo "  dev         Development environment"
+    echo "  prod        Production environment"
+    echo "  staging     Staging environment"
+    echo "  test        Testing environment"
+    echo ""
+    echo "If omitted, will be used development environment."
+    echo ""
+    echo "Examples:"
+    echo ""
+    echo "  ./blue-green status dev"
+    echo "  ./blue-green start dev"
+    echo "  ./blue-green stop prod"
+    echo "  ./blue-green-router switch-to-blue"
+    echo ""
+esac
