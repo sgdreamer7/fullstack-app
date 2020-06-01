@@ -1,0 +1,36 @@
+#!/bin/sh
+case "$1" in
+  "all")
+      docker ps -a $2 $3 $4 $5 $6 $7 $8 $9
+      ;;
+  "ids-names-status")
+      ./status all --format "{{.ID}}\t{{.Names}}\t\t{{.Status}}"
+      ;;
+  "names-status")
+      ./status all --format "{{.Names}}\t\t{{.Status}}"
+     ;;
+  "names")
+      ./status all --format "{{.Names}}" | sort
+     ;;
+  "images-names")
+      ./status all --format "{{.Image}}\t\t{{.Names}}" | sort
+     ;;
+  *)
+    echo ""
+    echo "usage: ./status COMMAND"
+    echo ""
+    echo  "Fullstack application status CLI"
+    echo ""
+    echo "Commands:"
+    echo "  all                 Show all info about services containers"
+    echo "  ids-names-status    Show ids, names, status for the services containers"
+    echo "  names-status        Show names, status for the services containers"
+    echo "  names               Show names for the services containers"
+    echo "  images-names        Show docker images, names for the services containers"
+    echo ""
+    echo "Examples:"
+    echo ""
+    echo "  ./status all"
+    echo "  ./status names-status"
+    echo ""
+esac

@@ -1,0 +1,37 @@
+#!/bin/sh
+case "$1" in
+  "build")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-" && export CURRENT_STATE="blue" && ./standalone build $2
+      ;;
+  "start")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-" && export CURRENT_STATE="blue" && ./standalone start $2
+     ;;
+  "stop")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-" && export CURRENT_STATE="blue" && ./standalone stop $2
+     ;;
+  *)
+    echo ""
+    echo "usage: ./blue COMMAND [ENVIRONMENT]"
+    echo ""
+    echo  "Blue state fullstack application CLI"
+    echo ""
+    echo "Commands:"
+    echo "  build   Build blue state docker images"
+    echo "  start   Start blue state application"
+    echo "  stop    Stop blue state application"
+    echo ""
+    echo "Environments: "
+    echo "  dev         Development environment"
+    echo "  prod        Production environment"
+    echo "  staging     Staging environment"
+    echo "  test        Testing environment"
+    echo ""
+    echo "Examples:"
+    echo ""
+    echo "If omitted, will be used development environment."
+    echo ""
+    echo "  ./blue build"
+    echo "  ./blue start dev"
+    echo "  ./blue stop prod"
+    echo ""
+esac

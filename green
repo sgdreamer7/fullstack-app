@@ -1,0 +1,37 @@
+#!/bin/sh
+case "$1" in
+  "build")
+      export COMPOSE_PROJECT_NAME_PREFIX="green-" && export CURRENT_STATE="green" && ./standalone build $2
+      ;;
+  "start")
+      export COMPOSE_PROJECT_NAME_PREFIX="green-" && export CURRENT_STATE="green" && ./standalone start $2
+     ;;
+  "stop")
+      export COMPOSE_PROJECT_NAME_PREFIX="green-" && export CURRENT_STATE="green" && ./standalone stop $2
+     ;;
+  *)
+    echo ""
+    echo "usage: ./green COMMAND [ENVIRONMENT]"
+    echo ""
+    echo "Green state fullstack application CLI"
+    echo ""
+    echo "Commands:"
+    echo "  build   Build green state docker images"
+    echo "  start   Start green state application"
+    echo "  stop    Stop green state application"
+    echo ""
+    echo "Environments: "
+    echo "  dev         Development environment"
+    echo "  prod        Production environment"
+    echo "  staging     Staging environment"
+    echo "  test        Testing environment"
+    echo ""
+    echo "If omitted, will be used development environment."
+    echo ""
+    echo "Examples:"
+    echo ""
+    echo "  ./green build"
+    echo "  ./green start dev"
+    echo "  ./green stop prod"
+    echo ""
+esac

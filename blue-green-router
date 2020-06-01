@@ -1,0 +1,58 @@
+#!/bin/sh
+case "$1" in
+  "build")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'docker-compose -f docker-compose.blue-green.yml build' $2
+      ;;
+  "start")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'docker-compose -f docker-compose.blue-green.yml up -d' $2
+     ;;
+  "stop")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'docker-compose -f docker-compose.blue-green.yml down' $2
+     ;;
+  "reload-blue")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && export CURRENT_STATE="blue" && ./scripts 'eval docker exec -it -e BLUE_GREEN_PORT=${BLUE_GREEN_PORT} -e CURRENT_STATE=${CURRENT_STATE} ${COMPOSE_PROJECT_NAME}-router /usr/src/app/reload.sh' $2
+     ;;
+  "reload-green")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && export CURRENT_STATE="green" && ./scripts 'eval docker exec -it -e BLUE_GREEN_PORT=${BLUE_GREEN_PORT} -e CURRENT_STATE=${CURRENT_STATE} ${COMPOSE_PROJECT_NAME}-router /usr/src/app/reload.sh' $2
+     ;;
+  "sh")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-router sh' $2
+     ;;
+  "logs")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-router' $2
+     ;;
+  "cmd")
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-router' $2 $3 $4 $5 $6 $7 $8 $9
+     ;;
+  *)
+    echo ""
+    echo "usage: ./blue-green-router COMMAND [ENVIRONMENT]"
+    echo ""
+    echo  "Blue/Green mode router for then fullstack application CLI"
+    echo ""
+    echo "Commands:"
+    echo "  build           Build blue/green mode router docker image"
+    echo "  start           Start blue/green mode router"
+    echo "  stop            Stop blue/green mode router"
+    echo "  reload-blue     Reload router config for the blue state"
+    echo "  reload-green    Reload router config for the green state"
+    echo "  sh              Run shell in router container"
+    echo "  logs            Show logs output for the router service"
+    echo "  cmd             Run command in the router service container"
+    echo ""
+    echo "Environments: "
+    echo "  dev         Development environment"
+    echo "  prod        Production environment"
+    echo "  staging     Staging environment"
+    echo "  test        Testing environment"
+    echo ""
+    echo "If omitted, will be used development environment."
+    echo ""
+    echo "Examples:"
+    echo ""
+    echo "  ./blue-green-router build"
+    echo "  ./blue-green-router start dev"
+    echo "  ./blue-green-router stop prod"
+    echo "  ./blue-green-router logs dev"
+    echo ""
+esac
