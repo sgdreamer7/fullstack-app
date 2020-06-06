@@ -1,28 +1,55 @@
 #!/bin/sh
+RUNNING_ENVIRONMENT="development"
+RUNNING_ENVIRONMENT_CMD="dev"
+case "$2" in
+  "dev")
+        RUNNING_ENVIRONMENT="development"
+        RUNNING_ENVIRONMENT_CMD="dev"
+      ;;
+   "prod")
+      RUNNING_ENVIRONMENT="production"
+      RUNNING_ENVIRONMENT_CMD="prod"
+     ;;
+   "staging")
+      RUNNING_ENVIRONMENT="staging"
+      RUNNING_ENVIRONMENT_CMD="staging"
+     ;;
+    "test")
+      RUNNING_ENVIRONMENT="test"
+      RUNNING_ENVIRONMENT_CMD="test"
+     ;;
+esac
+ENV_VARS="$(cat environments/${RUNNING_ENVIRONMENT}/.env | xargs)"
+export $(echo ${ENV_VARS} | xargs)
 case "$1" in
   "build")
-      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'docker-compose -f docker-compose.blue-green.yml build' $2
+      echo "Building application '${COMPOSE_PROJECT_NAME}' blue-green-router, '${RUNNING_ENVIRONMENT}' environment ..."
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'docker-compose -f docker-compose.blue-green.yml build --quiet' RUNNING_ENVIRONMENT_CMD
       ;;
   "start")
-      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'docker-compose -f docker-compose.blue-green.yml up -d' $2
+      echo "Starting application '${COMPOSE_PROJECT_NAME}' blue-green-router, '${RUNNING_ENVIRONMENT}' environment ..."
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'docker-compose -f docker-compose.blue-green.yml up -d' RUNNING_ENVIRONMENT_CMD
      ;;
   "stop")
-      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'docker-compose -f docker-compose.blue-green.yml down' $2
+      echo "Stoping application '${COMPOSE_PROJECT_NAME}' blue-green-router, '${RUNNING_ENVIRONMENT}' environment ..."
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'docker-compose -f docker-compose.blue-green.yml down' RUNNING_ENVIRONMENT_CMD
      ;;
   "reload-blue")
-      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && export CURRENT_STATE="blue" && ./scripts 'eval docker exec -it -e BLUE_GREEN_PORT=${BLUE_GREEN_PORT} -e CURRENT_STATE=${CURRENT_STATE} ${COMPOSE_PROJECT_NAME}-router /usr/src/app/reload.sh' $2
+      echo "Reloading application '${COMPOSE_PROJECT_NAME}' blue-green-router to the 'blue' state, '${RUNNING_ENVIRONMENT}' environment ..."
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && export CURRENT_STATE="blue" && ./scripts 'eval docker exec -it -e BLUE_GREEN_PORT=${BLUE_GREEN_PORT} -e CURRENT_STATE=${CURRENT_STATE} ${COMPOSE_PROJECT_NAME}-router /usr/src/app/reload.sh' RUNNING_ENVIRONMENT_CMD
      ;;
   "reload-green")
-      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && export CURRENT_STATE="green" && ./scripts 'eval docker exec -it -e BLUE_GREEN_PORT=${BLUE_GREEN_PORT} -e CURRENT_STATE=${CURRENT_STATE} ${COMPOSE_PROJECT_NAME}-router /usr/src/app/reload.sh' $2
+      echo "Reloading application '${COMPOSE_PROJECT_NAME}' blue-green-router to the 'green' state, '${RUNNING_ENVIRONMENT}' environment ..."
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && export CURRENT_STATE="green" && ./scripts 'eval docker exec -it -e BLUE_GREEN_PORT=${BLUE_GREEN_PORT} -e CURRENT_STATE=${CURRENT_STATE} ${COMPOSE_PROJECT_NAME}-router /usr/src/app/reload.sh' RUNNING_ENVIRONMENT_CMD
      ;;
   "sh")
-      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-router sh' $2
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-router sh' RUNNING_ENVIRONMENT_CMD
      ;;
   "logs")
-      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-router' $2
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-router' RUNNING_ENVIRONMENT_CMD
      ;;
   "cmd")
-      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker exec -it -e BLUE_GREEN_PORT=${BLUE_GREEN_PORT} -e BLUE_PORT=${BLUE_PORT} -e GREEN_PORT=${GREEN_PORT} -e CURRENT_STATE=${CURRENT_STATE} ${COMPOSE_PROJECT_NAME}-router' $2 $3 $4 $5 $6 $7 $8 $9
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker exec -it -e BLUE_GREEN_PORT=${BLUE_GREEN_PORT} -e BLUE_PORT=${BLUE_PORT} -e GREEN_PORT=${GREEN_PORT} -e CURRENT_STATE=${CURRENT_STATE} ${COMPOSE_PROJECT_NAME}-router' RUNNING_ENVIRONMENT_CMD $3 $4 $5 $6 $7 $8 $9
      ;;
   *)
     echo ""

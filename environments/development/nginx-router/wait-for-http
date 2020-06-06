@@ -21,17 +21,17 @@ USAGE
 
 wait_for() {
   for i in `seq $TIMEOUT` ; do
-    echo "Checking ${HOST}:${PORT}, ${i} second(s) elappsed..."
+    if [ "$QUIET" == 0 ]; then echo "Checking ${HOST}:${PORT}, ${i} second(s) elappsed..."; fi
     nc -z "$HOST" "$PORT" > /dev/null 2>&1
     
     result=$?
     if [ $result -eq 0 ] ; then
-      echo "Sending HTTP request to ${HOST}:${PORT}..."
+      if [ "$QUIET" == 0 ]; then echo "Sending HTTP request to ${HOST}:${PORT}..."; fi
       if [[ $(curl --head --location --connect-timeout 1 --write-out %{http_code} --silent --output /dev/null http://$HOST:$PORT) == 200 ]]; then 
         if [ $# -gt 0 ] ; then
           exec "$@"
         fi
-        echo "HTTP request to ${HOST}:${PORT} is OK"
+        if [ "$QUIET" == 0 ]; then echo "HTTP request to ${HOST}:${PORT} is OK"; fi
         exit 0;
       fi
     fi
