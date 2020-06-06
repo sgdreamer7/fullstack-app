@@ -1,0 +1,2 @@
+#!/bin/sh
+echo $(ip route show | awk '/default/ {print $3}') | xargs 

@@ -18,14 +18,18 @@ case "$1" in
       ./blue build $2
       ./blue stop $2 
       ./blue start $2
+      ./blue-green-router cmd $2 sh -c "\"/etc/nginx/wait-for-http -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_PORT}\""
       ./blue-green-router reload-blue $2
+      ./blue-green status $2
      ;;
    "switch-to-green")
       ./blue-green-router reload-blue $2
       ./green build $2
       ./green stop $2 
       ./green start $2
+      ./blue-green-router cmd $2 sh -c "\"/etc/nginx/wait-for-http -t 60 \\\$(/etc/nginx/get-host|xargs):\${GREEN_PORT}\""
       ./blue-green-router reload-green $2
+      ./blue-green status $2
      ;;
   *)
     echo ""

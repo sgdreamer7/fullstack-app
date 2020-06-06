@@ -22,7 +22,7 @@ case "$1" in
       export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-router' $2
      ;;
   "cmd")
-      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-router' $2 $3 $4 $5 $6 $7 $8 $9
+      export COMPOSE_PROJECT_NAME_PREFIX="blue-green-" && ./scripts 'eval docker exec -it -e BLUE_GREEN_PORT=${BLUE_GREEN_PORT} -e BLUE_PORT=${BLUE_PORT} -e GREEN_PORT=${GREEN_PORT} -e CURRENT_STATE=${CURRENT_STATE} ${COMPOSE_PROJECT_NAME}-router' $2 $3 $4 $5 $6 $7 $8 $9
      ;;
   *)
     echo ""
