@@ -1,19 +1,56 @@
 #!/bin/sh
+RUNNING_ENVIRONMENT="development"
+RUNNING_ENVIRONMENT_CMD="dev"
+case "$2" in
+  "dev")
+        RUNNING_ENVIRONMENT="development"
+        RUNNING_ENVIRONMENT_CMD="dev"
+      ;;
+   "prod")
+      RUNNING_ENVIRONMENT="production"
+      RUNNING_ENVIRONMENT_CMD="prod"
+     ;;
+   "staging")
+      RUNNING_ENVIRONMENT="staging"
+      RUNNING_ENVIRONMENT_CMD="staging"
+     ;;
+    "test")
+      RUNNING_ENVIRONMENT="test"
+      RUNNING_ENVIRONMENT_CMD="test"
+     ;;
+esac
+ENV_VARS="$(cat environments/${RUNNING_ENVIRONMENT}/.env | xargs)"
+export $(echo ${ENV_VARS} | xargs)
 case "$1" in
   "build")
-      ./scripts 'eval docker-compose build' $2
+      CURRENT_BUILD="standalone"
+      if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="blue";
+      elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="green"; fi
+      echo "Building application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, '${CURRENT_BUILD}' version ..."
+      ./scripts 'eval docker-compose build --quiet' ${RUNNING_ENVIRONMENT_CMD}
+      echo "Finished.\n"
       ;;
   "start")
-      ./scripts 'eval docker-compose up -d' $2
+      CURRENT_BUILD="standalone"
+      if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="blue";
+      elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="green"; fi
+      echo "Starting application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, '${CURRENT_BUILD}' version ..."
+      ./scripts 'eval docker-compose up -d' ${RUNNING_ENVIRONMENT_CMD}
+      echo "Finished.\n"
      ;;
   "stop")
-      ./scripts 'eval docker-compose down' $2
+      CURRENT_BUILD="standalone"
+      if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="blue";
+      elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="green"; fi
+      echo "Stoping application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, '${CURRENT_BUILD}' version ..."
+      ./scripts 'eval docker-compose down' ${RUNNING_ENVIRONMENT_CMD}
+      echo "Finished.\n"
      ;;
   "sh")
-      ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh' $2
+      ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh' ${RUNNING_ENVIRONMENT_CMD}
      ;;
   "logs")
-    case "$2" in
+    case "${RUNNING_ENVIRONMENT_CMD}" in
       "router")
         ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-nginx-router' $3 $4 $5 $6 $7 $8 $9 
         ;;
