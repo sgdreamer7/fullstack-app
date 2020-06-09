@@ -26,34 +26,35 @@ case "$1" in
       CURRENT_BUILD="standalone"
       if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="blue";
       elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="green"; fi
-      echo "Building application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, '${CURRENT_BUILD}' version ..."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:${CURRENT_BUILD}| building application ..."
       ./scripts 'eval docker-compose build --quiet' ${RUNNING_ENVIRONMENT_CMD}
-      echo "Finished.\n"
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:${CURRENT_BUILD}| build finished."
       ;;
   "start")
       CURRENT_BUILD="standalone"
       if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="blue";
       elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="green"; fi
-      echo "Starting application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, '${CURRENT_BUILD}' version ..."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:${CURRENT_BUILD}| starting application ..."
       ./scripts 'eval docker-compose up -d' ${RUNNING_ENVIRONMENT_CMD}
-      echo "Finished.\n"
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:${CURRENT_BUILD}| application started."
      ;;
   "stop")
       CURRENT_BUILD="standalone"
       if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="blue";
       elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="green"; fi
-      echo "Stoping application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, '${CURRENT_BUILD}' version ..."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:${CURRENT_BUILD}| stoping application ..."
       ./scripts 'eval docker-compose down' ${RUNNING_ENVIRONMENT_CMD}
-      echo "Finished.\n"
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:${CURRENT_BUILD}| application stopped."
      ;;
   "deploy")
       DEPLOYMENT_VERSION_TAG=$3
-      echo "Deploying application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, ${DEPLOYMENT_VERSION_TAG} version"
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:${DEPLOYMENT_VERSION_TAG}| deploying application ..."
       cd "$(dirname "$0")"
       ./standalone stop $2
       git checkout tags/${DEPLOYMENT_VERSION_TAG}
       ./standalone build $2
       ./standalone start $2
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:${CURRENT_BUILD}| application deployed."
      ;;
   "sh")
       ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh' ${RUNNING_ENVIRONMENT_CMD}
