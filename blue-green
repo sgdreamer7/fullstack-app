@@ -71,6 +71,12 @@ case "$1" in
           ./blue-green switch-to-blue RUNNING_ENVIRONMENT_CMD;
       fi
      ;;
+  "deploy-version")
+      DEPLOYMENT_VERSION_TAG=$3
+      echo "Deploying application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, ${DEPLOYMENT_VERSION_TAG} version"
+      git checkout tags/${DEPLOYMENT_VERSION_TAG}
+      ./blue-green deploy $2
+     ;;
   "rollback")
       echo "Rollback application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment to the previous state ..."
       STATE_BEFORE_ROLLBACK=$(wget -q -O - http://127.0.0.1/status)
