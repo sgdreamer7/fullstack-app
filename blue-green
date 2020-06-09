@@ -26,74 +26,77 @@ case "$1" in
       ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD "wget -q -O - http://127.0.0.1/status | xargs | echo"
       ;;
   "start")
-      echo "Starting application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment in blue/green mode ..."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| starting application  ..."
       ./blue start RUNNING_ENVIRONMENT_CMD
       ./green start RUNNING_ENVIRONMENT_CMD
       ./blue-green-router start RUNNING_ENVIRONMENT_CMD;
-      echo "Current state for the application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment is '$(wget -q -O - http://127.0.0.1/status)'";
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| application started."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| current state for the application is '$(wget -q -O - http://127.0.0.1/status)'."
       ;;
   "stop")
-      echo "Stoping application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment in blue/green mode ..."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| stoping application  ..."
       ./blue stop RUNNING_ENVIRONMENT_CMD
       ./green stop RUNNING_ENVIRONMENT_CMD
       ./blue-green-router stop RUNNING_ENVIRONMENT_CMD;
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| application stopped."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| current state for the application is '$(wget -q -O - http://127.0.0.1/status)'."
       ;;
   "switch-to-blue")
-      echo "Switching application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment to the 'blue' state ..."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| switching application to the 'blue' state ..."
       ./blue build RUNNING_ENVIRONMENT_CMD
       ./blue stop RUNNING_ENVIRONMENT_CMD 
       ./blue start RUNNING_ENVIRONMENT_CMD
       ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_PORT}\""
       ./blue-green-router reload-blue RUNNING_ENVIRONMENT_CMD
       ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
-      echo "Current state is '$(wget -q -O - http://127.0.0.1/status)'"
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| application switched to the 'blue' state."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| current state for the application is '$(wget -q -O - http://127.0.0.1/status)'."
      ;;
    "switch-to-green")
-      echo "Switching application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment to the 'green' state ..."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| switching application to the 'green' state ..."
       ./green build RUNNING_ENVIRONMENT_CMD
       ./green stop RUNNING_ENVIRONMENT_CMD 
       ./green start RUNNING_ENVIRONMENT_CMD
       ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${GREEN_PORT}\""
       ./blue-green-router reload-green RUNNING_ENVIRONMENT_CMD
       ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
-       echo "Current state for the application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment is '$(wget -q -O - http://127.0.0.1/status)'";
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| application switched to the 'green' state."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| current state for the application is '$(wget -q -O - http://127.0.0.1/status)'."
      ;;
   "deploy")
-      echo "Deploying application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment to the new state ..."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| deploying application to the new state ..."
       STATE_BEFORE_DEPLOYMENT=$(wget -q -O - http://127.0.0.1/status)
-      echo "Current state for the application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment is '${STATE_BEFORE_DEPLOYMENT}'";
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| current state for the application is '${STATE_BEFORE_DEPLOYMENT}'."
       if [ "$STATE_BEFORE_DEPLOYMENT" == "blue" ];
         then
-          echo "Deploying application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment to the 'green' state ..."
           ./blue-green switch-to-green RUNNING_ENVIRONMENT_CMD;
         else
-          echo "Deploying application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment to the 'blue' state ..."
           ./blue-green switch-to-blue RUNNING_ENVIRONMENT_CMD;
       fi
      ;;
   "deploy-version")
       DEPLOYMENT_VERSION_TAG=$3
-      echo "Deploying application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, ${DEPLOYMENT_VERSION_TAG} version"
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green:| deploying application ${DEPLOYMENT_VERSION_TAG} version ..."
       git checkout tags/${DEPLOYMENT_VERSION_TAG}
       ./blue-green deploy $2
      ;;
   "rollback")
-      echo "Rollback application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment to the previous state ..."
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| rollback application to the previous state ..."
       STATE_BEFORE_ROLLBACK=$(wget -q -O - http://127.0.0.1/status)
-      echo "Current state for the application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment is '${STATE_BEFORE_ROLLBACK}'";
+      echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| current state for the application is '${STATE_BEFORE_ROLLBACK}'."
       if [ "$STATE_BEFORE_ROLLBACK" == "blue" ];
         then
-          echo "Rollback application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment to the 'green' state ..."
+          echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| rollback application to the 'green' state ..."
           ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${GREEN_PORT}\"";
           ./blue-green-router reload-green RUNNING_ENVIRONMENT_CMD;
           ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
-          echo "Current state is '$(wget -q -O - http://127.0.0.1/status)'";
+          echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| current state for the application is '$(wget -q -O - http://127.0.0.1/status)'."
         else
-          echo "Rollback application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment to the 'green' state ..."
+          echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| rollback application to the 'blue' state ..."
           ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_PORT}\"";
           ./blue-green-router reload-blue RUNNING_ENVIRONMENT_CMD;
           ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
-          echo "Current state is '$(wget -q -O - http://127.0.0.1/status)'";
+          echo "|${COMPOSE_PROJECT_NAME}:${RUNNING_ENVIRONMENT}:blue-green| current state for the application is '$(wget -q -O - http://127.0.0.1/status)'."
       fi
      ;;
      
