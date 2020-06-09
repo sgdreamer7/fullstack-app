@@ -1,60 +1,75 @@
 #!/bin/sh
+WHITE='\033[1;37m'
+RED='\033[0;31m'
+LIGHT_RED='\033[1;31m'
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+LIGHT_GREEN='\033[1;32m'
+YELLOW='\033[1;33m'
+DARK_GRAY='\033[1;30m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
 RUNNING_ENVIRONMENT="development"
 RUNNING_ENVIRONMENT_CMD="dev"
+RUNNING_ENVIRONMENT_LABEL="${DARK_GRAY}${RUNNING_ENVIRONMENT}${NC}"
 case "$2" in
   "dev")
         RUNNING_ENVIRONMENT="development"
         RUNNING_ENVIRONMENT_CMD="dev"
+        RUNNING_ENVIRONMENT_LABEL="${DARK_GRAY}${RUNNING_ENVIRONMENT}${NC}"
       ;;
    "prod")
       RUNNING_ENVIRONMENT="production"
       RUNNING_ENVIRONMENT_CMD="prod"
+      RUNNING_ENVIRONMENT_LABEL="${GREEN}${RUNNING_ENVIRONMENT}${NC}"
      ;;
    "staging")
       RUNNING_ENVIRONMENT="staging"
       RUNNING_ENVIRONMENT_CMD="staging"
+      RUNNING_ENVIRONMENT_LABEL="${YELLOW}${RUNNING_ENVIRONMENT}${NC}"
      ;;
     "test")
       RUNNING_ENVIRONMENT="test"
       RUNNING_ENVIRONMENT_CMD="test"
+      RUNNING_ENVIRONMENT_LABEL="${PURPLE}${RUNNING_ENVIRONMENT}${NC}"
      ;;
 esac
 ENV_VARS="$(cat environments/${RUNNING_ENVIRONMENT}/.env | xargs)"
 export $(echo ${ENV_VARS} | xargs)
 case "$1" in
   "build")
-      CURRENT_BUILD="standalone"
-      if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="blue";
-      elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="green"; fi
-      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT}|${CURRENT_BUILD}| building application ..."
+      CURRENT_BUILD="${WHITE}standalone${NC}"
+      if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="${BLUE}blue${NC}";
+      elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="${GREEN}green${NC}"; fi
+      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${CURRENT_BUILD}| ${YELLOW}building${NC} application ..."
       ./scripts 'eval docker-compose build --quiet' ${RUNNING_ENVIRONMENT_CMD}
-      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT}|${CURRENT_BUILD}| build finished."
+      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${CURRENT_BUILD}| build finished."
       ;;
   "start")
-      CURRENT_BUILD="standalone"
-      if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="blue";
-      elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="green"; fi
-      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT}|${CURRENT_BUILD}| starting application ..."
+      CURRENT_BUILD="${WHITE}standalone${NC}"
+      if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="${BLUE}blue${NC}";
+      elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="${GREEN}green${NC}"; fi
+      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${CURRENT_BUILD}| ${LIGHT_GREEN}starting${NC} application ..."
       ./scripts 'eval docker-compose up -d' ${RUNNING_ENVIRONMENT_CMD}
-      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT}|${CURRENT_BUILD}| application started."
+      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${CURRENT_BUILD}| application ${GREEN}started${NC}."
      ;;
   "stop")
-      CURRENT_BUILD="standalone"
-      if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="blue";
-      elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="green"; fi
-      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT}|${CURRENT_BUILD}| stoping application ..."
+      CURRENT_BUILD="${WHITE}standalone${NC}"
+      if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="${BLUE}blue${NC}";
+      elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="${GREEN}green${NC}"; fi
+      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${CURRENT_BUILD}| ${LIGHT_RED}stoping${NC} application ..."
       ./scripts 'eval docker-compose down' ${RUNNING_ENVIRONMENT_CMD}
-      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT}|${CURRENT_BUILD}| application stopped."
+      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${CURRENT_BUILD}| application ${RED}stopped${NC}."
      ;;
   "deploy")
       DEPLOYMENT_VERSION_TAG=$3
-      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT}|${DEPLOYMENT_VERSION_TAG}| deploying application ..."
+      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${DEPLOYMENT_VERSION_TAG}| ${LIGHT_GREEN}deploying${NC} application ..."
       cd "$(dirname "$0")"
       ./standalone stop $2
       git checkout tags/${DEPLOYMENT_VERSION_TAG}
       ./standalone build $2
       ./standalone start $2
-      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT}|${CURRENT_BUILD}| application deployed."
+      echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${CURRENT_BUILD}| application ${GREEN}deployed${NC}."
      ;;
   "sh")
       ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh' ${RUNNING_ENVIRONMENT_CMD}
