@@ -46,6 +46,15 @@ case "$1" in
       ./scripts 'eval docker-compose down' ${RUNNING_ENVIRONMENT_CMD}
       echo "Finished.\n"
      ;;
+  "deploy")
+      DEPLOYMENT_VERSION_TAG=$3
+      echo "Deploying application '${COMPOSE_PROJECT_NAME}', '${RUNNING_ENVIRONMENT}' environment, ${DEPLOYMENT_VERSION_TAG} version"
+      cd "$(dirname "$0")"
+      ./standalone stop $2
+      git checkout tags/${DEPLOYMENT_VERSION_TAG}
+      ./standalone build $2
+      ./standalone start $2
+     ;;
   "sh")
       ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh' ${RUNNING_ENVIRONMENT_CMD}
      ;;
