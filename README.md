@@ -20,8 +20,6 @@ or in blue/green setup.
 ```bash
 git clone https://github.com/sgdreamer7/fullstack-app.git
 cd fullstack-app
-cp environments/development/.env.sample environments/development/.env
-cp environments/production/.env.sample environments/production/.env
 ./standalone build
 ./standalone start
 ./status all
@@ -30,3 +28,13 @@ cp environments/production/.env.sample environments/production/.env
 ```
 
 **Blue/Green mode:**
+
+```bash
+git clone https://github.com/sgdreamer7/fullstack-app.git
+cd fullstack-app
+./blue-green-router build
+./blue-green start
+./status all
+./blue-green deploy
+./blue-green stop
+```
