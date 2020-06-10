@@ -75,7 +75,7 @@ case "$1" in
       ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh' ${RUNNING_ENVIRONMENT_CMD}
      ;;
   "logs")
-    case "${RUNNING_ENVIRONMENT_CMD}" in
+    case "$2" in
       "router")
         ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-nginx-router' $3 $4 $5 $6 $7 $8 $9 
         ;;

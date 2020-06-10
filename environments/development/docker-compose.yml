@@ -12,6 +12,7 @@ services:
     env_file: "./env/nginx-router.env"
     environment:
       - NGINX_PORT=${NGINX_PORT}
+      - FRONTEND_PORT=${FRONTEND_PORT}
 
   minio:
     image: minio/minio
@@ -59,6 +60,10 @@ services:
       }
     restart: always
     env_file: "./env/frontend.env"
+    environment:
+      - PORT=${FRONTEND_PORT}
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     volumes:
       - ../../apps/frontend-${FRONTEND_TYPE}:/usr/src/app
 
