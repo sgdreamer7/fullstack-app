@@ -43,16 +43,14 @@ services:
     image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-frontend:${FRONTEND_TAG}
     container_name: ${COMPOSE_PROJECT_NAME}-frontend
     build:
-      {
-        context: "../../apps/frontend-${FRONTEND_TYPE}",
-        dockerfile: Dockerfile.production,
-      }
+      context: "../../apps/frontend-${FRONTEND_TYPE}"
+      dockerfile: Dockerfile.production
+      args:
+        PORT: ${FRONTEND_PORT}
     restart: always
     env_file: "./env/frontend.env"
     environment:
       - PORT=${FRONTEND_PORT}
-    ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     volumes:
       - ../../apps/frontend-${FRONTEND_TYPE}:/usr/src/app
 
