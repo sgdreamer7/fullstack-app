@@ -42,6 +42,8 @@ case "$1" in
       ;;
   "start")
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| ${LIGHT_GREEN}starting${NC} application  ..."
+      ./blue build RUNNING_ENVIRONMENT_CMD
+      ./green build RUNNING_ENVIRONMENT_CMD
       ./blue start RUNNING_ENVIRONMENT_CMD
       ./green start RUNNING_ENVIRONMENT_CMD
       ./blue-green-router start RUNNING_ENVIRONMENT_CMD;
