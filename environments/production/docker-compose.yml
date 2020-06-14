@@ -7,12 +7,16 @@ services:
     container_name: ${COMPOSE_PROJECT_NAME}-nginx-router
     build: { context: ./nginx-router }
     restart: always
-    ports: ["${NGINX_PORT}:${NGINX_PORT}"]
+    ports: ["${NGINX_PORT}:${NGINX_PORT}","${NGINX_SSL_PORT}:${NGINX_SSL_PORT}"]
     depends_on: ["minio", "frontend", "backend"]
-    env_file: "./env/nginx-router.env"
     environment:
+      - NGINX_HOST=${NGINX_HOST}
       - NGINX_PORT=${NGINX_PORT}
+      - NGINX_SSL_PORT=${NGINX_SSL_PORT}
       - FRONTEND_PORT=${FRONTEND_PORT}
+    volumes: 
+      -  ../../certificates/${NGINX_HOST}.server.key:/etc/nginx/ssl/${NGINX_HOST}/server.key
+      -  ../../certificates/${NGINX_HOST}.server.crt:/etc/nginx/ssl/${NGINX_HOST}/server.crt
 
   minio:
     image: minio/minio
