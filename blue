@@ -1,4 +1,6 @@
 #!/bin/sh
+echo $1
+echo $2
 case "$1" in
   "build")
       export COMPOSE_PROJECT_NAME_PREFIX="blue-" && export CURRENT_STATE="blue" && ./standalone build $2

@@ -6,11 +6,14 @@ services:
     container_name: ${COMPOSE_PROJECT_NAME}-router
     build: { context: ./blue-green-router }
     restart: always
-    ports: ["${BLUE_GREEN_ROUTER_PORT}:${BLUE_GREEN_ROUTER_PORT}"]
-    env_file: "./env/blue-green-router.env"
+    ports: ["${BLUE_GREEN_ROUTER_PORT}:${BLUE_GREEN_ROUTER_PORT}","${BLUE_GREEN_ROUTER_SSL_PORT}:${BLUE_GREEN_ROUTER_SSL_PORT}"]
     environment:
+      - NGINX_HOST=${NGINX_HOST}
       - BLUE_GREEN_ROUTER_PORT=${BLUE_GREEN_ROUTER_PORT}
+      - BLUE_GREEN_ROUTER_SSL_PORT=${BLUE_GREEN_ROUTER_SSL_PORT}
       - BLUE_GREEN_PORT=${BLUE_GREEN_PORT}
       - CURRENT_STATE=${CURRENT_STATE}
     volumes:
       - ./blue-green-router:/usr/src/app
+      -  ../../certificates/${NGINX_HOST}.server.key:/etc/nginx/ssl/${NGINX_HOST}/server.key
+      -  ../../certificates/${NGINX_HOST}.server.crt:/etc/nginx/ssl/${NGINX_HOST}/server.crt

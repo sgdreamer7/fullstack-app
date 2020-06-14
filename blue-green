@@ -38,15 +38,15 @@ ENV_VARS="$(cat environments/${RUNNING_ENVIRONMENT}/.env | xargs)"
 export $(echo ${ENV_VARS} | xargs)
 case "$1" in
   "status")
-      ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD "wget -q -O - http://127.0.0.1/status | xargs | echo"
+      ./blue-green-router cmd ${RUNNING_ENVIRONMENT_CMD} "wget -q -O - http://127.0.0.1/status | xargs | echo"
       ;;
   "start")
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| ${LIGHT_GREEN}starting${NC} application  ..."
-      ./blue build RUNNING_ENVIRONMENT_CMD
-      ./green build RUNNING_ENVIRONMENT_CMD
-      ./blue start RUNNING_ENVIRONMENT_CMD
-      ./green start RUNNING_ENVIRONMENT_CMD
-      ./blue-green-router start RUNNING_ENVIRONMENT_CMD;
+      ./blue build ${RUNNING_ENVIRONMENT_CMD}
+      ./green build ${RUNNING_ENVIRONMENT_CMD}
+      ./blue start ${RUNNING_ENVIRONMENT_CMD}
+      ./green start ${RUNNING_ENVIRONMENT_CMD}
+      ./blue-green-router start ${RUNNING_ENVIRONMENT_CMD};
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| application ${GREEN}started${NC}."
       BLUE_GREEN_CURRENT_STATE=$(wget -q -O - http://127.0.0.1/status)
       case "${BLUE_GREEN_CURRENT_STATE}" in
@@ -64,9 +64,9 @@ case "$1" in
       ;;
   "stop")
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| ${LIGHT_RED}stoping${NC} application  ..."
-      ./blue stop RUNNING_ENVIRONMENT_CMD
-      ./green stop RUNNING_ENVIRONMENT_CMD
-      ./blue-green-router stop RUNNING_ENVIRONMENT_CMD;
+      ./blue stop ${RUNNING_ENVIRONMENT_CMD}
+      ./green stop ${RUNNING_ENVIRONMENT_CMD}
+      ./blue-green-router stop ${RUNNING_ENVIRONMENT_CMD};
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| application  ${RED}stopped${NC}."
       BLUE_GREEN_CURRENT_STATE=$(wget -q -O - http://127.0.0.1/status)
       case "${BLUE_GREEN_CURRENT_STATE}" in
@@ -84,12 +84,12 @@ case "$1" in
       ;;
   "switch-to-blue")
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| switching application to the '${BLUE}blue${NC}' state ..."
-      ./blue build RUNNING_ENVIRONMENT_CMD
-      ./blue stop RUNNING_ENVIRONMENT_CMD 
-      ./blue start RUNNING_ENVIRONMENT_CMD
-      ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_PORT}\""
-      ./blue-green-router reload-blue RUNNING_ENVIRONMENT_CMD
-      ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
+      ./blue build ${RUNNING_ENVIRONMENT_CMD}
+      ./blue stop ${RUNNING_ENVIRONMENT_CMD} 
+      ./blue start ${RUNNING_ENVIRONMENT_CMD}
+      ./blue-green-router cmd ${RUNNING_ENVIRONMENT_CMD} sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_PORT}\""
+      ./blue-green-router reload-blue ${RUNNING_ENVIRONMENT_CMD}
+      ./blue-green-router cmd ${RUNNING_ENVIRONMENT_CMD} sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| application switched to the '${BLUE}blue${NC}' state."
       BLUE_GREEN_CURRENT_STATE=$(wget -q -O - http://127.0.0.1/status)
       case "${BLUE_GREEN_CURRENT_STATE}" in
@@ -107,12 +107,12 @@ case "$1" in
      ;;
    "switch-to-green")
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| switching application to the '${GREEN}green${NC}' state ..."
-      ./green build RUNNING_ENVIRONMENT_CMD
-      ./green stop RUNNING_ENVIRONMENT_CMD 
-      ./green start RUNNING_ENVIRONMENT_CMD
-      ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${GREEN_PORT}\""
-      ./blue-green-router reload-green RUNNING_ENVIRONMENT_CMD
-      ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
+      ./green build ${RUNNING_ENVIRONMENT_CMD}
+      ./green stop ${RUNNING_ENVIRONMENT_CMD} 
+      ./green start ${RUNNING_ENVIRONMENT_CMD}
+      ./blue-green-router cmd ${RUNNING_ENVIRONMENT_CMD} sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${GREEN_PORT}\""
+      ./blue-green-router reload-green ${RUNNING_ENVIRONMENT_CMD}
+      ./blue-green-router cmd ${RUNNING_ENVIRONMENT_CMD} sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| application switched to the '${GREEN}green${NC}' state."
       BLUE_GREEN_CURRENT_STATE=$(wget -q -O - http://127.0.0.1/status)
       case "${BLUE_GREEN_CURRENT_STATE}" in
@@ -145,9 +145,9 @@ case "$1" in
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| current state for the application is '${BLUE_GREEN_CURRENT_STATE}'."
       if [ "$BLUE_GREEN_CURRENT_STATE" == "${BLUE}blue${NC}" ];
         then
-          ./blue-green switch-to-green RUNNING_ENVIRONMENT_CMD;
+          ./blue-green switch-to-green ${RUNNING_ENVIRONMENT_CMD};
         else
-          ./blue-green switch-to-blue RUNNING_ENVIRONMENT_CMD;
+          ./blue-green switch-to-blue ${RUNNING_ENVIRONMENT_CMD};
       fi
      ;;
   "deploy-version")
@@ -174,9 +174,9 @@ case "$1" in
       if [ "$BLUE_GREEN_CURRENT_STATE" == "${BLUE}blue${NC}" ];
         then
           echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| ${LIGHT_RED}rollback${NC} application to the '${GREEN}blue${NC}' state ..."
-          ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${GREEN_PORT}\"";
-          ./blue-green-router reload-green RUNNING_ENVIRONMENT_CMD;
-          ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
+          ./blue-green-router cmd ${RUNNING_ENVIRONMENT_CMD} sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${GREEN_PORT}\"";
+          ./blue-green-router reload-green ${RUNNING_ENVIRONMENT_CMD};
+          ./blue-green-router cmd ${RUNNING_ENVIRONMENT_CMD} sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
           BLUE_GREEN_CURRENT_STATE=$(wget -q -O - http://127.0.0.1/status)
           case "${BLUE_GREEN_CURRENT_STATE}" in
             "blue")
@@ -192,9 +192,9 @@ case "$1" in
           echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| current state for the application is '${BLUE_GREEN_CURRENT_STATE}'."
         else
           echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${BLUE}blue${NC}-${GREEN}green${NC}| ${LIGHT_RED}rollback${NC} application to the '${BLUE}blue${NC}' state ..."
-          ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_PORT}\"";
-          ./blue-green-router reload-blue RUNNING_ENVIRONMENT_CMD;
-          ./blue-green-router cmd RUNNING_ENVIRONMENT_CMD sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
+          ./blue-green-router cmd ${RUNNING_ENVIRONMENT_CMD} sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_PORT}\"";
+          ./blue-green-router reload-blue ${RUNNING_ENVIRONMENT_CMD};
+          ./blue-green-router cmd ${RUNNING_ENVIRONMENT_CMD} sh -c "\"/etc/nginx/wait-for-http -q -t 60 \\\$(/etc/nginx/get-host|xargs):\${BLUE_GREEN_PORT}\"";
           case "${BLUE_GREEN_CURRENT_STATE}" in
             "blue")
               BLUE_GREEN_CURRENT_STATE="${BLUE}${BLUE_GREEN_CURRENT_STATE}${NC}"
