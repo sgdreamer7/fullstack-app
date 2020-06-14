@@ -1,3 +1,6 @@
 .history
 
 *.pem
+*.crt
+*.csr
+*.key
