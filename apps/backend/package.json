@@ -1,0 +1,14 @@
+{
+  "name": "backend",
+  "version": "0.1.0",
+  "description": "",
+  "main": "backend.js",
+  "scripts": {
+    "dev": "nodemon backend.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "confme": "^1.0.0"
+  }
+}
