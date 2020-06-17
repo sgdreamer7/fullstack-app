@@ -36,6 +36,8 @@ case "$2" in
 esac
 ENV_VARS="$(cat environments/${RUNNING_ENVIRONMENT}/.env | xargs)"
 export $(echo ${ENV_VARS} | xargs)
+export "COMPOSE_PROJECT_NAME_PREFIX=${COMPOSE_PROJECT_NAME_PREFIX}"
+export "LOCALHOST_PREFIX=$(if [[ $LOCALHOST_PREFIX ]]; then echo ${LOCALHOST_PREFIX}; else echo ''; fi)"
 case "$1" in
   "build")
       CURRENT_BUILD="${WHITE}standalone${NC}"
@@ -46,6 +48,8 @@ case "$1" in
       echo "|${COMPOSE_PROJECT_NAME}|${RUNNING_ENVIRONMENT_LABEL}|${CURRENT_BUILD}| build finished."
       ;;
   "start")
+      if [[ $(docker network ls|grep "blue-green-${COMPOSE_PROJECT_NAME}") ]]; then echo "Network blue-green-${COMPOSE_PROJECT_NAME} exists."; else echo "Creating network blue-green-${COMPOSE_PROJECT_NAME} ..."; docker network create "blue-green-${COMPOSE_PROJECT_NAME}"; fi
+      if [[ $(docker network ls|grep "standalone-${COMPOSE_PROJECT_NAME_PREFIX}${COMPOSE_PROJECT_NAME}") ]]; then echo "Network standalone-${COMPOSE_PROJECT_NAME_PREFIX}${COMPOSE_PROJECT_NAME} exists."; else echo "Creating network standalone-${COMPOSE_PROJECT_NAME_PREFIX}${COMPOSE_PROJECT_NAME} ..."; docker network create "standalone-${COMPOSE_PROJECT_NAME_PREFIX}${COMPOSE_PROJECT_NAME}"; fi
       CURRENT_BUILD="${WHITE}standalone${NC}"
       if [ "$CURRENT_STATE" == "blue" ]; then CURRENT_BUILD="${BLUE}blue${NC}";
       elif [ "$CURRENT_STATE" == "green" ]; then CURRENT_BUILD="${GREEN}green${NC}"; fi

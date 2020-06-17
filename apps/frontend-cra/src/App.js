@@ -8,6 +8,9 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
+          Current blue/green state is '{process.env.REACT_APP_CURRENT_STATE}'
+        </p>
+        <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <a

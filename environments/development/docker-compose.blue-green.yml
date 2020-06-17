@@ -4,16 +4,31 @@ services:
   router:
     image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-router:${NGINX_ROUTER_TAG}
     container_name: ${COMPOSE_PROJECT_NAME}-router
+    networks:
+      blue-green:
+        aliases:
+          - "${COMPOSE_PROJECT_NAME}.blue-green"
     build: { context: ./blue-green-router }
     restart: always
-    ports: ["${BLUE_GREEN_ROUTER_PORT}:${BLUE_GREEN_ROUTER_PORT}","${BLUE_GREEN_ROUTER_SSL_PORT}:${BLUE_GREEN_ROUTER_SSL_PORT}"]
+    ports:
+      [
+        "${BLUE_GREEN_ROUTER_PORT}:${BLUE_GREEN_ROUTER_PORT}",
+        "${BLUE_GREEN_ROUTER_SSL_PORT}:${BLUE_GREEN_ROUTER_SSL_PORT}",
+      ]
     environment:
       - NGINX_HOST=${NGINX_HOST}
       - BLUE_GREEN_ROUTER_PORT=${BLUE_GREEN_ROUTER_PORT}
       - BLUE_GREEN_ROUTER_SSL_PORT=${BLUE_GREEN_ROUTER_SSL_PORT}
       - BLUE_GREEN_PORT=${BLUE_GREEN_PORT}
       - CURRENT_STATE=${CURRENT_STATE}
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME_WITHOUT_PREFIX}
     volumes:
       - ./blue-green-router:/usr/src/app
-      -  ../../certificates/${NGINX_HOST}.server.key:/etc/nginx/ssl/${NGINX_HOST}/server.key
-      -  ../../certificates/${NGINX_HOST}.server.crt:/etc/nginx/ssl/${NGINX_HOST}/server.crt
+      - ../../certificates/${NGINX_HOST}.server.key:/etc/nginx/ssl/${NGINX_HOST}/server.key
+      - ../../certificates/${NGINX_HOST}.server.crt:/etc/nginx/ssl/${NGINX_HOST}/server.crt
+
+networks:
+  blue-green:
+    external:
+      name: blue-green-${COMPOSE_PROJECT_NAME_WITHOUT_PREFIX}
+    driver: bridge
