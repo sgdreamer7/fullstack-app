@@ -2,22 +2,31 @@ version: "3.8"
 
 services:
   nginx-router:
-    networks: { default: { aliases: ["${COMPOSE_PROJECT_NAME}.local"] } }
+    networks:
+      default:
+        aliases:
+          - "${COMPOSE_PROJECT_NAME}.local"
+      blue-green:
+        aliases:
+          - "${COMPOSE_PROJECT_NAME}.${COMPOSE_PROJECT_NAME_PREFIX}"
     image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-nginx-router:${NGINX_ROUTER_TAG}
     container_name: ${COMPOSE_PROJECT_NAME}-nginx-router
     build: { context: ./nginx-router }
     restart: always
-    ports: ["${NGINX_PORT}:${NGINX_PORT}","${NGINX_SSL_PORT}:${NGINX_SSL_PORT}"]
+    ports:
+      [
+        "${LOCALHOST_PREFIX}${NGINX_PORT}:${NGINX_PORT}",
+        "${LOCALHOST_PREFIX}${NGINX_SSL_PORT}:${NGINX_SSL_PORT}",
+      ]
     depends_on: ["adminer", "mailhog", "minio", "frontend", "backend"]
     environment:
       - NGINX_HOST=${NGINX_HOST}
       - NGINX_PORT=${NGINX_PORT}
       - NGINX_SSL_PORT=${NGINX_SSL_PORT}
       - FRONTEND_PORT=${FRONTEND_PORT}
-    volumes: 
-      -  ../../certificates/${NGINX_HOST}.server.key:/etc/nginx/ssl/${NGINX_HOST}/server.key
-      -  ../../certificates/${NGINX_HOST}.server.crt:/etc/nginx/ssl/${NGINX_HOST}/server.crt
-      
+    volumes:
+      - ../../certificates/${NGINX_HOST}.server.key:/etc/nginx/ssl/${NGINX_HOST}/server.key
+      - ../../certificates/${NGINX_HOST}.server.crt:/etc/nginx/ssl/${NGINX_HOST}/server.crt
 
   minio:
     image: minio/minio
@@ -53,7 +62,7 @@ services:
     image: mailhog/mailhog
     container_name: ${COMPOSE_PROJECT_NAME}-mailhog
     restart: always
-    ports: ["${MAILHOG_PORT}:8025"]
+    ports: ["127.0.0.1:${MAILHOG_PORT}:8025"]
 
   frontend:
     image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-frontend:${FRONTEND_TAG}
@@ -63,6 +72,7 @@ services:
       dockerfile: Dockerfile
       args:
         PORT: ${FRONTEND_PORT}
+        REACT_APP_CURRENT_STATE: ${CURRENT_STATE}
     restart: always
     env_file: "./env/frontend.env"
     environment:
@@ -77,3 +87,13 @@ services:
 
 volumes:
   minio:
+
+networks:
+  default:
+    external:
+      name: standalone-${COMPOSE_PROJECT_NAME_PREFIX}${COMPOSE_PROJECT_NAME_WITHOUT_PREFIX}
+    driver: bridge
+  blue-green:
+    external:
+      name: blue-green-${COMPOSE_PROJECT_NAME_WITHOUT_PREFIX}
+    driver: bridge

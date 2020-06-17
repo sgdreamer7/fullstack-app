@@ -1,13 +1,13 @@
 #!/bin/sh
 case "$1" in
   "build")
-      export COMPOSE_PROJECT_NAME_PREFIX="green-" && export CURRENT_STATE="green" && ./standalone build $2
+      export COMPOSE_PROJECT_NAME_PREFIX="green-" && export CURRENT_STATE="green" && export LOCALHOST_PREFIX="127.0.0.1:" && ./standalone build $2
       ;;
   "start")
-      export COMPOSE_PROJECT_NAME_PREFIX="green-" && export CURRENT_STATE="green" && ./standalone start $2
+      export COMPOSE_PROJECT_NAME_PREFIX="green-" && export CURRENT_STATE="green" && export LOCALHOST_PREFIX="127.0.0.1:" && ./standalone start $2
      ;;
   "stop")
-      export COMPOSE_PROJECT_NAME_PREFIX="green-" && export CURRENT_STATE="green" && ./standalone stop $2
+      export COMPOSE_PROJECT_NAME_PREFIX="green-" && export CURRENT_STATE="green" && export LOCALHOST_PREFIX="127.0.0.1:" && ./standalone stop $2
      ;;
   *)
     echo ""

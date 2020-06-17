@@ -1,6 +1,8 @@
 FROM node:current-alpine as build
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
+ARG REACT_APP_CURRENT_STATE
+ENV REACT_APP_CURRENT_STATE $REACT_APP_CURRENT_STATE
 COPY package.json yarn.lock ./
 RUN yarn --silent --production
 COPY . /usr/src/app

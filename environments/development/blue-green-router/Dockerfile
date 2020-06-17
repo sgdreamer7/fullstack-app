@@ -6,4 +6,4 @@ RUN curl -L https://github.com/a8m/envsubst/releases/download/v1.1.0/envsubst-`u
 COPY ./router.conf /etc/nginx/nginx.template
 COPY ./wait-for-http /etc/nginx/wait-for-http
 COPY ./get-host /etc/nginx/get-host
-CMD ["/bin/sh", "-c", "export $(echo \"BLUE_GREEN_HOST=$(ip route show | awk '/default/ {print $3}')\" | xargs) && envsubst < /etc/nginx/nginx.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "envsubst < /etc/nginx/nginx.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
