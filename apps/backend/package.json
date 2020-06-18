@@ -4,11 +4,58 @@
   "description": "",
   "main": "backend.js",
   "scripts": {
-    "dev": "nodemon backend.js"
+    "dev": "nodemon lib/backend.js",
+    "lint": "cross-env NODE_ENV=development eslint --cache --format=pretty ."
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "confme": "^1.0.0"
+    "aws-sdk": "^2.700.0",
+    "bluebird": "^3.7.2",
+    "chista": "^1.0.0",
+    "cls-hooked": "^4.2.2",
+    "confme": "^1.0.0",
+    "connect-busboy": "^0.0.2",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
+    "docopt": "^0.6.2",
+    "express": "^4.17.1",
+    "fs-extra": "^9.0.1",
+    "handlebars": "^4.7.6",
+    "json-pointer": "^0.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "livr": "^2.3.1",
+    "livr-extra-rules": "^1.2.1",
+    "nodemailer": "^6.4.10",
+    "nodemailer-sendmail-transport": "^1.0.2",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "pino": "^6.3.2",
+    "rename-keys": "^2.0.1",
+    "sequelize": "^5.21.13",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-formatter-pretty": "^2.0.0",
+    "eslint-import-resolver-webpack": "^0.10.1",
+    "eslint-plugin-compat": "^2.6.3",
+    "eslint-plugin-flowtype": "^3.2.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^22.0.0",
+    "eslint-plugin-jsx-a11y": "6.1.2",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-testcafe": "^0.2.1",
+    "husky": "^1.1.4",
+    "lint-staged": "^8.1.0",
+    "nodemon": "^1.18.10",
+    "prettier": "^1.15.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint"
+    }
   }
 }
