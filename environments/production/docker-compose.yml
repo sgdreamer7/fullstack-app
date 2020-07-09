@@ -53,6 +53,32 @@ services:
     depends_on: ["minio"]
     command: "/minio.init/init.sh"
 
+  db:
+    image: mysql:8.0.19
+    container_name: ${COMPOSE_PROJECT_NAME}-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports: ["3306:3306"]
+    volumes: ["../../data/mysql:/var/lib/mysql"]
+    environment:
+      MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}
+      MYSQL_USER: ${COMPOSE_PROJECT_NAME}
+      MYSQL_PASSWORD: ${COMPOSE_PROJECT_NAME}
+      MYSQL_ROOT_PASSWORD: ${COMPOSE_PROJECT_NAME}
+
+  test-db:
+    image: mysql:8.0.19
+    container_name: ${COMPOSE_PROJECT_NAME}-test-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports: ["6603:3306"]
+    volumes: ["../../data/mysql-test:/var/lib/mysql"]
+    environment:
+      MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}-test
+      MYSQL_USER: ${COMPOSE_PROJECT_NAME}
+      MYSQL_PASSWORD: ${COMPOSE_PROJECT_NAME}
+      MYSQL_ROOT_PASSWORD: ${COMPOSE_PROJECT_NAME}
+
   frontend:
     image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-frontend:${FRONTEND_TAG}
     container_name: ${COMPOSE_PROJECT_NAME}-frontend
@@ -73,6 +99,7 @@ services:
     image: nginx:alpine
     container_name: ${COMPOSE_PROJECT_NAME}-backend
     restart: always
+    depends_on: ["db", "test-db"]
 
 volumes:
   minio:
