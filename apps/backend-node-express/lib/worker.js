@@ -30,6 +30,7 @@ const config = require('./config');
   const { sequelize } = DomainModel.initModels(config[dbMode]);
 
   DomainModel.setLogger(logger);
+  await sequelize.sync();
 
   // Init Use Cases Layer
   UseCaseBase.setSequelizeInstance(sequelize);

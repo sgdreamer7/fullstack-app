@@ -79,24 +79,33 @@ case "$1" in
       ./scripts 'eval docker exec -it ${COMPOSE_PROJECT_NAME}-nginx-router sh' ${RUNNING_ENVIRONMENT_CMD}
      ;;
   "logs")
-    case "$2" in
+    case "$3" in
       "router")
-        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-nginx-router' $3 $4 $5 $6 $7 $8 $9 
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-nginx-router' $2 $4 $5 $6 $7 $8 $9 
         ;;
       "frontend")
-        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-frontend' $3 $4 $5 $6 $7 $8 $9
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-frontend' $2 $4 $5 $6 $7 $8 $9
+        ;;
+      "backend")
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-backend' $2 $4 $5 $6 $7 $8 $9
+        ;;
+      "db")
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-db' $2 $4 $5 $6 $7 $8 $9
+        ;;
+      "test-db")
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-test-db' $2 $4 $5 $6 $7 $8 $9
         ;;
       "adminer")
-        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-adminer' $3 $4 $5 $6 $7 $8 $9
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-adminer' $2 $4 $5 $6 $7 $8 $9
         ;;
       "mailhog")
-        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-mailhog' $3 $4 $5 $6 $7 $8 $9
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-mailhog' $2 $4 $5 $6 $7 $8 $9
         ;;
       "minio")
-        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-minio' $3 $4 $5 $6 $7 $8 $9
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-minio' $2 $4 $5 $6 $7 $8 $9
         ;;
       "minio-client")
-        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-minio-client' $3 $4 $5 $6 $7 $8 $9
+        ./scripts 'eval docker logs ${COMPOSE_PROJECT_NAME}-minio-client' $2 $4 $5 $6 $7 $8 $9
         ;;
       *)
         echo ""
@@ -106,6 +115,9 @@ case "$1" in
         echo ""
         echo "    router          Logging for the nginx-router service"
         echo "    frontend        Logging for the frontend service"
+        echo "    backend         Logging for the backend service"
+        echo "    db              Logging for the db service"
+        echo "    test-db         Logging for the test-db service"
         echo "    adminer         Logging for the adminer service"
         echo "    mailhog         Logging for the mailhog service"
         echo "    minio           Logging for the minio service"
@@ -132,6 +144,9 @@ case "$1" in
     echo "  for the logs command:"
     echo "    router          Logging for the nginx-router service"
     echo "    frontend        Logging for the frontend service"
+    echo "    backend         Logging for the backend service"
+    echo "    db              Logging for the db service"
+    echo "    test-db         Logging for the test-db service"
     echo "    adminer         Logging for the adminer service"
     echo "    mailhog         Logging for the mailhog service"
     echo "    minio           Logging for the minio service"
@@ -160,6 +175,9 @@ case "$1" in
     echo "  ./standalone start prod"
     echo "  ./standalone logs dev router"
     echo "  ./standalone logs prod frontend --follow"
+    echo "  ./standalone logs dev backend --follow"
+    echo "  ./standalone logs dev db --follow"
+    echo "  ./standalone logs dev tetst-db --follow"
     echo "  ./standalone deploy prod 0.1.2"
     echo ""
 esac

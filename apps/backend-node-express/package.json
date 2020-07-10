@@ -4,7 +4,7 @@
   "description": "",
   "main": "backend.js",
   "scripts": {
-    "dev": "nodemon lib/backend.js",
+    "start": "nodemon lib/backend.js",
     "lint": "cross-env NODE_ENV=development eslint --cache --format=pretty ."
   },
   "author": "",
@@ -26,6 +26,7 @@
     "jsonwebtoken": "^8.5.1",
     "livr": "^2.3.1",
     "livr-extra-rules": "^1.2.1",
+    "mysql2": "^2.1.0",
     "nodemailer": "^6.4.10",
     "nodemailer-sendmail-transport": "^1.0.2",
     "nodemailer-smtp-transport": "^2.7.4",

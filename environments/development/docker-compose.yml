@@ -70,7 +70,7 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports: ["3306:3306"]
-    volumes: ["../../data/mysql:/var/lib/mysql"]
+    volumes: ["../../data/${COMPOSE_PROJECT_NAME}/mysql:/var/lib/mysql"]
     environment:
       MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}
       MYSQL_USER: ${COMPOSE_PROJECT_NAME}
@@ -83,7 +83,7 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports: ["6603:3306"]
-    volumes: ["../../data/mysql-test:/var/lib/mysql"]
+    volumes: ["../../data/${COMPOSE_PROJECT_NAME}/mysql-test:/var/lib/mysql"]
     environment:
       MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}-test
       MYSQL_USER: ${COMPOSE_PROJECT_NAME}
@@ -107,10 +107,26 @@ services:
       - ../../apps/frontend-${FRONTEND_TYPE}:/usr/src/app
 
   backend:
-    image: nginx:alpine
+    networks:
+      default:
+        aliases:
+          - "${COMPOSE_PROJECT_NAME}.local"
+      blue-green:
+        aliases:
+          - "${COMPOSE_PROJECT_NAME}.${COMPOSE_PROJECT_NAME_PREFIX}"
+    image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-backend:${BACKEND_TAG}
     container_name: ${COMPOSE_PROJECT_NAME}-backend
+    build:
+      context: ../../apps/backend-${BACKEND_TYPE}
+      dockerfile: Dockerfile
     restart: always
+    env_file: "./env/backend.env"
+    environment:
+      MODE: "application"
+    ports: ["${LOCALHOST_PREFIX}5000:5000"]
     depends_on: ["db", "test-db", "mailhog"]
+    volumes:
+      - ../../apps/backend-${BACKEND_TYPE}:/usr/src/app
 
 volumes:
   minio:
