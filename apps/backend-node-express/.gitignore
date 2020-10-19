@@ -1,0 +1,13 @@
+/.history
+/.DS_Store
+/node_modules
+/dist
+
+/.vscode
+
+.eslintcache
+.env
+/PDF
+/HTML
+
+

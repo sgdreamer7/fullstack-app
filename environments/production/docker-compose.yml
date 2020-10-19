@@ -18,7 +18,7 @@ services:
         "${LOCALHOST_PREFIX}${NGINX_PORT}:${NGINX_PORT}",
         "${LOCALHOST_PREFIX}${NGINX_SSL_PORT}:${NGINX_SSL_PORT}",
       ]
-    depends_on: ["minio", "frontend", "backend"]
+    depends_on: ["minio", "adminer", "frontend", "backend"]
     environment:
       - NGINX_HOST=${NGINX_HOST}
       - NGINX_PORT=${NGINX_PORT}
@@ -53,6 +53,37 @@ services:
     depends_on: ["minio"]
     command: "/minio.init/init.sh"
 
+  adminer:
+    image: adminer
+    container_name: ${COMPOSE_PROJECT_NAME}-adminer
+    restart: always
+
+  db:
+    image: mysql:8.0.19
+    container_name: ${COMPOSE_PROJECT_NAME}-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports: ["3306:3306"]
+    volumes: ["../../data/${COMPOSE_PROJECT_NAME}/mysql:/var/lib/mysql"]
+    environment:
+      MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}
+      MYSQL_USER: ${COMPOSE_PROJECT_NAME}
+      MYSQL_PASSWORD: ${COMPOSE_PROJECT_NAME}
+      MYSQL_ROOT_PASSWORD: ${COMPOSE_PROJECT_NAME}
+
+  test-db:
+    image: mysql:8.0.19
+    container_name: ${COMPOSE_PROJECT_NAME}-test-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports: ["6603:3306"]
+    volumes: ["../../data/${COMPOSE_PROJECT_NAME}/mysql-test:/var/lib/mysql"]
+    environment:
+      MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}-test
+      MYSQL_USER: ${COMPOSE_PROJECT_NAME}
+      MYSQL_PASSWORD: ${COMPOSE_PROJECT_NAME}
+      MYSQL_ROOT_PASSWORD: ${COMPOSE_PROJECT_NAME}
+
   frontend:
     image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-frontend:${FRONTEND_TAG}
     container_name: ${COMPOSE_PROJECT_NAME}-frontend
@@ -70,9 +101,26 @@ services:
       - ../../apps/frontend-${FRONTEND_TYPE}:/usr/src/app
 
   backend:
-    image: nginx:alpine
+    networks:
+      default:
+        aliases:
+          - "${COMPOSE_PROJECT_NAME}.local"
+      blue-green:
+        aliases:
+          - "${COMPOSE_PROJECT_NAME}.${COMPOSE_PROJECT_NAME_PREFIX}"
+    image: ${DOCKER_USERNAME}/${COMPOSE_PROJECT_NAME}-backend:${BACKEND_TAG}
     container_name: ${COMPOSE_PROJECT_NAME}-backend
+    build:
+      context: ../../apps/backend-${BACKEND_TYPE}
+      dockerfile: Dockerfile
     restart: always
+    env_file: "./env/backend.env"
+    environment:
+      MODE: "application"
+    ports: ["${LOCALHOST_PREFIX}5000:5000"]
+    depends_on: ["db", "test-db"]
+    volumes:
+      - ../../apps/backend-${BACKEND_TYPE}:/usr/src/app
 
 volumes:
   minio:

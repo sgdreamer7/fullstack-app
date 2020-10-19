@@ -4,3 +4,5 @@
 *.crt
 *.csr
 *.key
+
+data
