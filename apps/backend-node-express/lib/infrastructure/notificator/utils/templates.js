@@ -21,7 +21,7 @@ module.exports = {
       return TEMPLATES_LIST[templateName];
     }
 
-    const templatesDir = pathModule.join(dirname, '/../../../../templates');
+    const templatesDir = pathModule.join(dirname, '/../../../templates');
     // eslint-disable-next-line compat/compat
     const [bodyTemplate, subjectTemplate] = await Promise.all([
       fse.readFile(pathModule.join(templatesDir, templateName, 'body.html')),

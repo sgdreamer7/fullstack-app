@@ -39,5 +39,6 @@
     "host": "{{TEST_DB_HOST}}",
     "port": "{{TEST_DB_PORT}}"
   },
-  "defaultLang": "EN"
+  "defaultLang": "EN",
+  "cookieExpiration": 900000
 }

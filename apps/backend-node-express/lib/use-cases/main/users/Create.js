@@ -20,7 +20,7 @@ class UsersCreate extends Base {
 
       try {
         await this.notificator.notify('ACTIVATE_USER', data.email, {
-          ...user,
+          ...dumpUser(user),
           actionId: action.id
         });
       } catch (err) {} // eslint-disable-line no-trailing-spaces, no-empty

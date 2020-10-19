@@ -14,6 +14,7 @@ app.use(middlewares.clsMiddleware);
 app.use(middlewares.urlencoded);
 app.use(middlewares.cors);
 app.use(middlewares.include);
+app.use(middlewares.cookieParser);
 app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1', mainRouter);
 

@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const busboy = require('connect-busboy');
 const uuid = require('uuid');
+const cookieParser = require('cookie-parser');
 
 const clsNamespace = require('../../clsNamespace');
 
@@ -58,5 +59,6 @@ module.exports = {
 
     return next();
   },
-  busboy: busboy()
+  busboy: busboy(),
+  cookieParser: cookieParser()
 };
