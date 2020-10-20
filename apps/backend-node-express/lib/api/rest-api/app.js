@@ -6,6 +6,7 @@ const logger = require('../logger');
 const middlewares = require('./middlewares');
 const adminRouter = require('./admin/router');
 const mainRouter = require('./main/router');
+const graphqlRouter = require('./graphql/router');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(middlewares.include);
 app.use(middlewares.cookieParser);
 app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1', mainRouter);
+app.use('/graphql', graphqlRouter);
 
 let server = null;
 
