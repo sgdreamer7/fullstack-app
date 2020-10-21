@@ -2,7 +2,7 @@ const pino = require('pino');
 const clsNamespace = require('../clsNamespace');
 
 const options = {
-  prettyPrint: !process.env.NODE_ENV === 'production',
+  prettyPrint: !(process.env.NODE_ENV === 'production'),
   redact: {
     paths: [
       'msg.*.data.password',

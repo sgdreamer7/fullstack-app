@@ -36,6 +36,7 @@
     "nodemailer-stub-transport": "^1.1.0",
     "pg": "^8.4.1",
     "pino": "^6.3.2",
+    "pino-pretty": "^4.3.0",
     "rename-keys": "^2.0.1",
     "sequelize": "^5.21.13",
     "url": "^0.11.0"
