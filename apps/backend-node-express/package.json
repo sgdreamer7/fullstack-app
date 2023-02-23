@@ -35,7 +35,7 @@
     "pg": "^8.4.1",
     "pino": "^6.3.2",
     "rename-keys": "^2.0.1",
-    "sequelize": "^5.21.13",
+    "sequelize": "^6.28.2",
     "url": "^0.11.0"
   },
   "devDependencies": {
